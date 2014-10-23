@@ -26,13 +26,15 @@ namespace DnC_Inversions
             var array = new int[counter];
             foreach (var variable in list) array[variable.Key] = Convert.ToInt32(variable.Value);
 
+            var time = DateTime.Now.Millisecond;
+
             var numberOfInversions = SortAndCount(array, out array);
 
-            Console.WriteLine(numberOfInversions);
+            Console.WriteLine(numberOfInversions + " counted in: " + (DateTime.Now.Millisecond - time) + " ms");
             Console.ReadKey();
         }
 
-        static int SortAndCount(int[] arrayInts, out int[] newArrayInts)
+        static Int64 SortAndCount(int[] arrayInts, out int[] newArrayInts)
         {
             if (arrayInts.Length <= 1)
             {
@@ -48,6 +50,7 @@ namespace DnC_Inversions
             var z = SplitCount(splitArrayInts[0], splitArrayInts[1], out arrayInts);
 
             newArrayInts = arrayInts;
+
             return x + y + z;
         }
 
