@@ -5,6 +5,8 @@ namespace DnC_QuickSort
 {
     class Program
     {
+        static Random rand = new Random();
+
         static void Main()
         {
             string line;
@@ -27,21 +29,26 @@ namespace DnC_QuickSort
 
             var time = DateTime.Now.Millisecond;
 
-            QuickSort(array, 0, array.Length - 1);
+            var result = QuickSort(array, 0, array.Length - 1);
 
-            Console.WriteLine("counted in: " + (DateTime.Now.Millisecond - time) + " ms");
+            Console.WriteLine(result + " counted in: " + (DateTime.Now.Millisecond - time) + " ms");
             Console.ReadKey();
         }
 
-        static void QuickSort(int[] arrayInts, int startPointer, int stopPointer)
+        static Int64 QuickSort(int[] arrayInts, int startPointer, int stopPointer)
         {
-            if (stopPointer <= startPointer) return;
+            if (stopPointer <= startPointer) return 0;
 
-            var pivot = stopPointer;
+            var pivot = rand.Next(startPointer, stopPointer); //var pivot = Median(arrayInts, startPointer, stopPointer);
+
             var splitPoint = Partition(arrayInts, pivot, startPointer, stopPointer);
 
-            QuickSort(arrayInts, startPointer, splitPoint - 1);
-            QuickSort(arrayInts, splitPoint + 1, stopPointer);
+            var numberOfComparisons = stopPointer - startPointer;
+
+            var x = QuickSort(arrayInts, startPointer, splitPoint - 1);
+            var y = QuickSort(arrayInts, splitPoint + 1, stopPointer);
+
+            return numberOfComparisons + x + y;
         }
 
         static int Partition(int[] arrayInts, int pivotIndex, int startPointer, int stopPointer)
@@ -54,11 +61,9 @@ namespace DnC_QuickSort
 
             for (var j = i; j <= stopPointer; j++)
             {
-                if (arrayInts[j] < arrayInts[startPointer])
-                {
-                    Swap(arrayInts, j, i);
-                    i++;
-                }
+                if (arrayInts[j] >= arrayInts[startPointer]) continue;
+                Swap(arrayInts, j, i);
+                i++;
             }
 
             Swap(arrayInts, startPointer, i - 1);
@@ -72,9 +77,31 @@ namespace DnC_QuickSort
             arrayInts[index2] = storageInt;
         }
 
-        static void Median(int[] arrayInts)
+        static int Median(int[] arrayInts, int startPointer, int stopPointer)
         {
-            
+            var array = new int[3];
+
+            array[0] = arrayInts[startPointer];
+
+            var middlePointer = (int)Math.Floor((double)(stopPointer + startPointer) / 2);
+
+            array[1] = arrayInts[middlePointer];
+            array[2] = arrayInts[stopPointer];
+
+            if (stopPointer - startPointer < 2)
+            {
+                if (array[0] < array[2]) return startPointer;
+                return stopPointer;
+            }
+
+            if (array[1] < array[0] && array[0] < array[2]) return startPointer;
+            if (array[2] < array[0] && array[0] < array[1]) return startPointer;
+            if (array[0] < array[1] && array[1] < array[2]) return middlePointer;
+            if (array[2] < array[1] && array[1] < array[0]) return middlePointer;
+            if (array[0] < array[2] && array[2] < array[1]) return stopPointer;
+            if (array[1] < array[2] && array[2] < array[0]) return stopPointer;
+
+            return startPointer;
         }
     }
 }
