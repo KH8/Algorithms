@@ -63,7 +63,7 @@ namespace DnC_QuickSort
                 }
             }
 
-            Swap(arrayInts, 0, i-1);
+            Swap(arrayInts, startPointer, i - 1);
             return i - 1;
         }
 
