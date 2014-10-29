@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace DnC_QuickSort
 {
@@ -29,9 +28,8 @@ namespace DnC_QuickSort
             var time = DateTime.Now.Millisecond;
 
             QuickSort(array, 0, array.Length - 1);
-            //var numberOfInversions = SortAndCount(array, out array);
 
-            //Console.WriteLine(numberOfInversions + " counted in: " + (DateTime.Now.Millisecond - time) + " ms");
+            Console.WriteLine("counted in: " + (DateTime.Now.Millisecond - time) + " ms");
             Console.ReadKey();
         }
 
@@ -39,7 +37,7 @@ namespace DnC_QuickSort
         {
             if (stopPointer <= startPointer) return;
 
-            var pivot = 0;
+            var pivot = stopPointer;
             var splitPoint = Partition(arrayInts, pivot, startPointer, stopPointer);
 
             QuickSort(arrayInts, startPointer, splitPoint - 1);
@@ -67,11 +65,16 @@ namespace DnC_QuickSort
             return i - 1;
         }
 
-        static void Swap(int[] array, int index1, int index2)
+        static void Swap(int[] arrayInts, int index1, int index2)
         {
-            var storageInt = array[index1];
-            array[index1] = array[index2];
-            array[index2] = storageInt;
+            var storageInt = arrayInts[index1];
+            arrayInts[index1] = arrayInts[index2];
+            arrayInts[index2] = storageInt;
+        }
+
+        static void Median(int[] arrayInts)
+        {
+            
         }
     }
 }
