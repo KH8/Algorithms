@@ -1,31 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace RandomizedContraction
 {
-    class Vortex
+    public class Vertex
     {
         public int Id { get; set; }
-        public List<Vortex> EdgesList;
+        public List<Vertex> EdgesList;
 
         public int NunberOfedges
         {
             get { return EdgesList.Count; }
         }
 
-        public Vortex(int id)
+        public Vertex(int id)
         {
             Id = id;
-            EdgesList = new List<Vortex>();
-        }
-
-        public void Contract(Vortex vortex)
-        {
-            
+            EdgesList = new List<Vertex>();
         }
     }
 }
