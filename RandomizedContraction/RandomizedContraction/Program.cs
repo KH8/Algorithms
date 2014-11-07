@@ -10,24 +10,8 @@ namespace RandomizedContraction
     {
         static void Main()
         {
-            var graph = new Graph();
-
-            graph.AddVertex(new Vertex(1));
-            graph.AddVertex(new Vertex(2));
-            graph.AddVertex(new Vertex(3));
-            graph.AddVertex(new Vertex(4));
-            graph.AddVertex(new Vertex(5));
-
-            graph.AddEdge(graph.ReturnVortex(1),graph.ReturnVortex(2));
-            graph.AddEdge(graph.ReturnVortex(2), graph.ReturnVortex(3));
-            graph.AddEdge(graph.ReturnVortex(3), graph.ReturnVortex(4));
-            graph.AddEdge(graph.ReturnVortex(1), graph.ReturnVortex(4));
-            graph.AddEdge(graph.ReturnVortex(1), graph.ReturnVortex(4));
-            graph.AddEdge(graph.ReturnVortex(2), graph.ReturnVortex(4));
-            graph.AddEdge(graph.ReturnVortex(3), graph.ReturnVortex(5));
-            graph.AddEdge(graph.ReturnVortex(3), graph.ReturnVortex(5));
-            graph.AddEdge(graph.ReturnVortex(3), graph.ReturnVortex(5));
-
+            var graph = BuiltGraph();
+                
             Console.WriteLine("A minCut found is: " + RandomizedContraction(graph, graph.NumberOfVertices^2));
             Console.ReadKey();
         }
@@ -55,6 +39,43 @@ namespace RandomizedContraction
             }
 
             return minCut;
+        }
+
+        private static Graph BuiltGraph()
+        {
+            var graph = new Graph();
+
+            string line;
+
+            var verticesList = new List<string[]>();
+
+            // Read the file and display it line by line.
+            var file = new System.IO.StreamReader("kargerMinCut.txt");
+
+            while ((line = file.ReadLine()) != null) verticesList.Add(line.Split('\t'));
+            foreach (var stringse in verticesList) graph.AddVertex(new Vertex(Convert.ToInt16(stringse[0])));
+
+            foreach (var stringse in verticesList)
+            {
+                for (var i = 1; i < stringse.Length; i++)
+                {
+                    if (stringse[i] == "x" || stringse[i].Trim().Length == 0) continue;
+
+                    var actualVortexId = Convert.ToInt32(stringse[0]);
+                    var actualEdgeId = Convert.ToInt32(stringse[i]);
+
+                    graph.AddEdge(graph.ReturnVortex(actualVortexId), graph.ReturnVortex(actualEdgeId));
+
+                    for (var j = 1; j < verticesList[actualEdgeId - 1].Length; j++)
+                    {
+                        if (verticesList[actualEdgeId - 1][j] != stringse[0]) continue;
+                        verticesList[actualEdgeId - 1][j] = "x";
+                        break;
+                    }
+                }
+            }
+
+            return graph;
         }
     }
 }
