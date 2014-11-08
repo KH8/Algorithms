@@ -11,7 +11,7 @@ namespace RandomizedContraction
         static void Main()
         {
             var graph = BuiltGraph();
-                
+
             Console.WriteLine("A minCut found is: " + RandomizedContraction(graph, graph.NumberOfVertices^2));
             Console.ReadKey();
         }
@@ -20,10 +20,10 @@ namespace RandomizedContraction
         {
             while (true)
             {
-                if (graph.NumberOfVertices <= 2) return graph.Vertices.PickRandom().NunberOfedges;
+                if (graph.NumberOfVertices <= 2) return graph.Edges.Count;
 
-                var vertexSelected = graph.Vertices.PickRandom();
-                graph.ContractVertices(vertexSelected, vertexSelected.EdgesList.PickRandom());
+                var vertexSelected = graph.Edges.PickRandom();
+                graph.ContractVertices(vertexSelected.Key, vertexSelected.Value);
             }
         }
 
@@ -55,7 +55,7 @@ namespace RandomizedContraction
             var file = new System.IO.StreamReader("kargerMinCut.txt");
 
             while ((line = file.ReadLine()) != null) verticesList.Add(line.Split('\t'));
-            foreach (var stringse in verticesList) graph.AddVertex(new Vertex(Convert.ToInt16(stringse[0])));
+            foreach (var stringse in verticesList) graph.AddVertex(Convert.ToInt16(stringse[0]));
 
             foreach (var stringse in verticesList)
             {
