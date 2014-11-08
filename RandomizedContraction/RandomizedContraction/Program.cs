@@ -36,6 +36,8 @@ namespace RandomizedContraction
                 var newGraph = (Graph)graph.Clone();
                 var actualCut = RandomizedContraction(newGraph);
                 if (actualCut < minCut) minCut = actualCut;
+
+                Console.WriteLine(i + " : " + minCut);
             }
 
             return minCut;
