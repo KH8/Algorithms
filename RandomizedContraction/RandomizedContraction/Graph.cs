@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace RandomizedContraction
@@ -41,50 +40,36 @@ namespace RandomizedContraction
             Edges.Add(new KeyValuePair<int, int>(vertex1, vertex2));
         }
 
-        public void RemoveEdge(int vertex)
-        {
-            var verticesToBeRemoved = Edges.Where(keyValuePair => keyValuePair.Key == vertex || keyValuePair.Value == vertex).ToList();
-
-            foreach (var pair in verticesToBeRemoved)
-            {
-                Edges.Remove(pair);
-            }
-        }
-
-        public void RemoveSelfLoops()
-        {
-            var verticesToBeRemoved = Edges.Where(keyValuePair => keyValuePair.Key == keyValuePair.Value).ToList();
-
-            foreach (var pair in verticesToBeRemoved)
-            {
-                Edges.Remove(pair);
-            }
-        }
-
         public void ContractVertices(int vertex1, int vertex2)
         {
             var verticesToBeAdded = new List<KeyValuePair<int,int>>();
+            var verticesToBeRemoved = new List<KeyValuePair<int, int>>();
 
             foreach (var keyValuePair in Edges)
             {
-                if (keyValuePair.Key == vertex2)
+                if (keyValuePair.Key == vertex2 && keyValuePair.Value != vertex1)
                 {
                     verticesToBeAdded.Add(new KeyValuePair<int, int>(vertex1, keyValuePair.Value));
                 }
-                if (keyValuePair.Value == vertex2)
+                if (keyValuePair.Value == vertex2 && keyValuePair.Key != vertex1)
                 {
                     verticesToBeAdded.Add(new KeyValuePair<int, int>(keyValuePair.Key, vertex1));
                 }
+                if ((keyValuePair.Key == vertex2 || keyValuePair.Value == vertex2 ) || keyValuePair.Key == keyValuePair.Value)
+                {
+                    verticesToBeRemoved.Add(keyValuePair);
+                }
             }
 
-            RemoveEdge(vertex2);
-
+            foreach (var pair in verticesToBeRemoved)
+            {
+                Edges.Remove(pair);
+            }
             foreach (var vertex in verticesToBeAdded)
             {
                 AddEdge(vertex.Key, vertex.Value);
             }
 
-            RemoveSelfLoops();
             RemoveVertex(vertex2);
         }
 
