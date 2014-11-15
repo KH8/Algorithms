@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SCCs
 {
     class Program
     {
-        static int _finishingTime = 0;
-        static int _actualLeader = 0;
-        private static Dictionary<int, int> _leaderCounter = new Dictionary<int, int>();  
+        static int _finishingTime;
+        static int _actualLeader;
+        static readonly Dictionary<int, int> LeaderCounter = new Dictionary<int, int>();  
 
         static void Main()
         {
@@ -26,7 +23,7 @@ namespace SCCs
 
             DfsLoop(graph, graphWithFinishingTimes);
 
-            foreach (var i in _leaderCounter)
+            foreach (var i in LeaderCounter)
             {
                 Console.WriteLine("A vertex: " + i.Key + " is a leader of " + i.Value + " vertices");
             }
@@ -52,7 +49,7 @@ namespace SCCs
                 if (!graphWithFinishingTimes[i].IsExplored)
                 {
                     _actualLeader = graphWithFinishingTimes[i].Id;
-                    _leaderCounter.Add(_actualLeader, 0);
+                    LeaderCounter.Add(_actualLeader, 0);
 
                     DFS(graph, graphWithFinishingTimes[i].Id);
                 }
@@ -63,7 +60,7 @@ namespace SCCs
         {
             graph[node].IsExplored = true;
             graph[node].LeaderId = _actualLeader;
-            if(_leaderCounter.ContainsKey(_actualLeader)) _leaderCounter[_actualLeader]++;
+            if(LeaderCounter.ContainsKey(_actualLeader)) LeaderCounter[_actualLeader]++;
 
             foreach (var edge in graph[node].Edges)
             {
