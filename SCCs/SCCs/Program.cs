@@ -11,11 +11,26 @@ namespace SCCs
     {
         static int _finishingTime = 0;
         static int _actualLeader = 0;
+        private static Dictionary<int, int> _leaderCounter = new Dictionary<int, int>();  
 
         static void Main()
         {
-            var graph = BuiltGraph(true);
-            DfsLoop(graph);
+            var graphReversed = BuiltGraph(true);
+            DfsLoop(graphReversed);
+
+            var graph = BuiltGraph(false);
+            var graphWithFinishingTimes = graphReversed.ToDictionary(vertex => vertex.Value.FinishingTime, vertex => graph[vertex.Key]);
+
+            _finishingTime = 0;
+            _actualLeader = 0;
+
+            DfsLoop(graph, graphWithFinishingTimes);
+
+            foreach (var i in _leaderCounter)
+            {
+                Console.WriteLine("A vertex: " + i.Key + " is a leader of " + i.Value + " vertices");
+            }
+            Console.ReadKey();
         }
 
         static void DfsLoop(Dictionary<int, Vertex> graph)
@@ -30,10 +45,25 @@ namespace SCCs
             }
         }
 
+        static void DfsLoop(Dictionary<int, Vertex> graph, Dictionary<int, Vertex> graphWithFinishingTimes)
+        {
+            for (var i = graphWithFinishingTimes.Count; i > 0; i--)
+            {
+                if (!graphWithFinishingTimes[i].IsExplored)
+                {
+                    _actualLeader = graphWithFinishingTimes[i].Id;
+                    _leaderCounter.Add(_actualLeader, 0);
+
+                    DFS(graph, graphWithFinishingTimes[i].Id);
+                }
+            }
+        }
+
         static void DFS(Dictionary<int, Vertex> graph, int node)
         {
             graph[node].IsExplored = true;
             graph[node].LeaderId = _actualLeader;
+            if(_leaderCounter.ContainsKey(_actualLeader)) _leaderCounter[_actualLeader]++;
 
             foreach (var edge in graph[node].Edges)
             {
