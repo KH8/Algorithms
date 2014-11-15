@@ -11,13 +11,12 @@ namespace SCCs
     {
         static void Main()
         {
-            var graph = BuiltGraph();
-
+            var graph = BuiltGraph(true);
         }
 
-        private static Collection<Vertex> BuiltGraph()
+        private static Dictionary<int, Vertex> BuiltGraph(Boolean reversed)
         {
-            var graph = new Collection<Vertex>();
+            var graph = new Dictionary<int, Vertex>();
 
             string line;
 
@@ -28,22 +27,19 @@ namespace SCCs
 
             while ((line = file.ReadLine()) != null) verticesList.Add(line.Split(' '));
 
-            var lastVertex = new Vertex(0);
-
             foreach (var edge in verticesList)
             {
-                var vertexId = Convert.ToInt32(edge[0]);
-                var edgeId = Convert.ToInt32(edge[1]);
+                var vertexId = Convert.ToInt32(reversed ? edge[1] : edge[0]);
+                var edgeId = Convert.ToInt32(reversed ? edge[0] : edge[1]);
 
-                if (vertexId == lastVertex.Id)
+                if (graph.ContainsKey(vertexId))
                 {
-                    lastVertex.Edges.Add(edgeId);
+                    graph[vertexId].Edges.Add(edgeId);
                     continue;
                 }
 
-                lastVertex = new Vertex(vertexId);
-                lastVertex.Edges.Add(edgeId);
-                graph.Add(lastVertex);
+                graph.Add(vertexId, new Vertex(vertexId));
+                graph[vertexId].Edges.Add(edgeId);
             }
 
             return graph;
