@@ -9,9 +9,39 @@ namespace SCCs
 {
     class Program
     {
+        static int _finishingTime = 0;
+        static int _actualLeader = 0;
+
         static void Main()
         {
             var graph = BuiltGraph(true);
+            DfsLoop(graph);
+        }
+
+        static void DfsLoop(Dictionary<int, Vertex> graph)
+        {
+            for (var i = graph.Count; i > 0; i--)
+            {
+                if (!graph[i].IsExplored)
+                {
+                    _actualLeader = i;
+                    DFS(graph, i);
+                }
+            }
+        }
+
+        static void DFS(Dictionary<int, Vertex> graph, int node)
+        {
+            graph[node].IsExplored = true;
+            graph[node].LeaderId = _actualLeader;
+
+            foreach (var edge in graph[node].Edges)
+            {
+                if(!graph[edge].IsExplored) DFS(graph, edge);
+            }
+
+            _finishingTime++;
+            graph[node].FinishingTime = _finishingTime;
         }
 
         private static Dictionary<int, Vertex> BuiltGraph(Boolean reversed)
