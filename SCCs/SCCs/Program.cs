@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace SCCs
 {
@@ -8,72 +9,84 @@ namespace SCCs
     {
         static int _finishingTime;
         static int _actualLeader;
-        static readonly Dictionary<int, int> LeaderCounter = new Dictionary<int, int>();  
+
+        static int[] _finishingTimes;
+        static int[] _exploration; 
+
+        static readonly Dictionary<int, int> LeaderCounter = new Dictionary<int, int>(); 
 
         static void Main()
         {
-            var graphReversed = BuiltGraph(true);
-            DfsLoop(graphReversed);
+            var T = new Thread(ThreadDelegate, 16000000);
+            T.Start();
+        }
 
-            var graph = BuiltGraph(false);
-            var graphWithFinishingTimes = graphReversed.ToDictionary(vertex => vertex.Value.FinishingTime, vertex => graph[vertex.Key]);
+        public static void ThreadDelegate()
+        {
+            var graph = BuiltGraph(true);
+            _finishingTimes = new int[graph.Count + 1];
+            _exploration = new int[graph.Count + 1];
 
-            _finishingTime = 0;
+            DfsLoop(graph);
+
+            graph = BuiltGraph(false);
+
             _actualLeader = 0;
+            _exploration = new int[graph.Count + 1];
 
-            DfsLoop(graph, graphWithFinishingTimes);
+            DfsLoop(graph, _finishingTimes);
 
-            foreach (var i in LeaderCounter)
+            var sortedDict = from entry in LeaderCounter orderby entry.Value descending select entry;
+            int[] counter = {0};
+
+            foreach (var i in sortedDict.TakeWhile(i => counter[0] < 5))
             {
                 Console.WriteLine("A vertex: " + i.Key + " is a leader of " + i.Value + " vertices");
+                counter[0]++;
             }
             Console.ReadKey();
         }
 
-        static void DfsLoop(Dictionary<int, Vertex> graph)
+        static void DfsLoop(Dictionary<int, List<int>> graph)
         {
             for (var i = graph.Count; i > 0; i--)
             {
-                if (!graph[i].IsExplored)
-                {
-                    _actualLeader = i;
-                    DFS(graph, i);
-                }
+                if (_exploration[i] != 0) continue;
+                _actualLeader = i;
+                Dfs(graph, i, true);
             }
         }
 
-        static void DfsLoop(Dictionary<int, Vertex> graph, Dictionary<int, Vertex> graphWithFinishingTimes)
+        static void DfsLoop(Dictionary<int, List<int>> graph, IList<int> finishingTimes)
         {
-            for (var i = graphWithFinishingTimes.Count; i > 0; i--)
+            for (var i = finishingTimes.Count - 1; i > 0; i--)
             {
-                if (!graphWithFinishingTimes[i].IsExplored)
-                {
-                    _actualLeader = graphWithFinishingTimes[i].Id;
-                    LeaderCounter.Add(_actualLeader, 0);
+                if (_exploration[finishingTimes[i]] == 1) continue;
+                _actualLeader = finishingTimes[i];
+                LeaderCounter.Add(_actualLeader, 0);
 
-                    DFS(graph, graphWithFinishingTimes[i].Id);
-                }
+                Dfs(graph, finishingTimes[i], false);
             }
         }
 
-        static void DFS(Dictionary<int, Vertex> graph, int node)
+        static void Dfs(Dictionary<int, List<int>> graph, int node, Boolean countTimes)
         {
-            graph[node].IsExplored = true;
-            graph[node].LeaderId = _actualLeader;
+            _exploration[node] = 1;
             if(LeaderCounter.ContainsKey(_actualLeader)) LeaderCounter[_actualLeader]++;
 
-            foreach (var edge in graph[node].Edges)
+            foreach (var edge in graph[node].Where(edge => _exploration[edge] != 1))
             {
-                if(!graph[edge].IsExplored) DFS(graph, edge);
+                Dfs(graph, edge, countTimes);
             }
 
+            if (!countTimes) return;
             _finishingTime++;
-            graph[node].FinishingTime = _finishingTime;
+            _finishingTimes[_finishingTime] = node;
         }
 
-        private static Dictionary<int, Vertex> BuiltGraph(Boolean reversed)
+        private static Dictionary<int, List<int>> BuiltGraph(Boolean reversed)
         {
-            var graph = new Dictionary<int, Vertex>();
+            var graph = new Dictionary<int, List<int>>();
 
             string line;
 
@@ -89,14 +102,16 @@ namespace SCCs
                 var vertexId = Convert.ToInt32(reversed ? edge[1] : edge[0]);
                 var edgeId = Convert.ToInt32(reversed ? edge[0] : edge[1]);
 
-                if (graph.ContainsKey(vertexId))
+                if (!graph.ContainsKey(vertexId))
                 {
-                    graph[vertexId].Edges.Add(edgeId);
-                    continue;
+                    graph.Add(vertexId, new List<int>());
+                }
+                if (!graph.ContainsKey(edgeId))
+                {
+                    graph.Add(edgeId, new List<int>());
                 }
 
-                graph.Add(vertexId, new Vertex(vertexId));
-                graph[vertexId].Edges.Add(edgeId);
+                graph[vertexId].Add(edgeId);
             }
 
             return graph;
