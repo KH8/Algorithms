@@ -8,20 +8,58 @@ namespace Dijkstra
 {
     class Program
     {
-        private static Dictionary<int, List<KeyValuePair<int,int>>> _graphV;
-        private static Dictionary<int, List<KeyValuePair<int, int>>> _graphX = new Dictionary<int, List<KeyValuePair<int, int>>>();
+        private static Dictionary<int, List<KeyValuePair<int, int>>> _graphV;
+        private static readonly Dictionary<int, List<KeyValuePair<int, int>>> GraphX = new Dictionary<int, List<KeyValuePair<int, int>>>();
 
-        private static Dictionary<int, int> _shortestPaths = new Dictionary<int, int>(); 
+        private static readonly Dictionary<int, int> ShortestPaths = new Dictionary<int, int>(); 
 
         static void Main()
         {
             _graphV = BuiltGraph();
 
-            _graphX.Add(1,_graphV[1]);
+            GraphX.Add(1, _graphV[1]);
             _graphV.Remove(1);
-            _shortestPaths.Add(1,0);
+            ShortestPaths.Add(1,0);
 
+            while (_graphV.Count != 0)
+            {
+                var nodeSelectedId = 0;
 
+                foreach (var nodex in GraphX)
+                {
+                    foreach (var edge in nodex.Value.Where(edge => _graphV.ContainsKey(edge.Key)))
+                    {
+                        if (nodeSelectedId == 0)
+                        {
+                            nodeSelectedId = edge.Key;
+                            ShortestPaths.Add(nodeSelectedId, ShortestPaths[nodex.Key] + edge.Value);
+                        }
+                        else
+                        {
+                            if (edge.Key == nodeSelectedId &&
+                                ShortestPaths[edge.Key] > ShortestPaths[nodex.Key] + edge.Value)
+                                ShortestPaths[edge.Key] = ShortestPaths[nodex.Key] + edge.Value;
+                        }
+                    }
+                }
+
+                if(nodeSelectedId == 0) throw new Exception("Fuck!");
+
+                GraphX.Add(nodeSelectedId, _graphV[nodeSelectedId]);
+                _graphV.Remove(nodeSelectedId);
+
+            }
+
+            Console.WriteLine(ShortestPaths[7]+
+                ","+ ShortestPaths[37]+
+                ","+ ShortestPaths[59]+
+                ","+ ShortestPaths[82]+
+                ","+ ShortestPaths[99]+
+                ","+ ShortestPaths[115]+
+                ","+ ShortestPaths[133]+
+                ","+ ShortestPaths[165]+
+                ","+ ShortestPaths[188]+
+                ","+ ShortestPaths[197]);
 
             Console.ReadKey();
         }
