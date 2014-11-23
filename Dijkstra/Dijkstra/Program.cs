@@ -9,40 +9,40 @@ namespace Dijkstra
     /// <remarks> 
     /// Class computes a shortest path problem in the graph, using the Dijkstra's algorithms.
     /// </remarks> 
-    class Program
+    public class Program
     {
         /// <summary> 
         /// Store for the given graph V.</summary> 
-        private static Dictionary<int, List<KeyValuePair<int, int>>> _graphV;
+        public static Dictionary<int, List<KeyValuePair<int, int>>> GraphV;
 
         /// <summary> 
         /// Store for the working graph X.</summary> 
-        private static readonly Dictionary<int, List<KeyValuePair<int, int>>> GraphX = new Dictionary<int, List<KeyValuePair<int, int>>>();
+        public static readonly Dictionary<int, List<KeyValuePair<int, int>>> GraphX = new Dictionary<int, List<KeyValuePair<int, int>>>();
 
         /// <summary> 
         /// Store for the computed shortest paths.</summary> 
-        private static readonly Dictionary<int, int> ShortestPaths = new Dictionary<int, int>();
+        public static readonly Dictionary<int, int> ShortestPaths = new Dictionary<int, int>();
 
         /// <summary> 
         /// Main and the only one method solvin a Dijkstra's shortest path problem</summary> 
-        static void Main()
+        public static void Main()
         {
-            _graphV = BuiltGraph("dijkstraData.txt");
+            GraphV = BuiltGraph("dijkstraData.txt");
 
-            foreach (var node in _graphV) ShortestPaths.Add(node.Key, 1000000);
+            foreach (var node in GraphV) ShortestPaths.Add(node.Key, 1000000);
 
-            GraphX.Add(1, _graphV[1]);
-            _graphV.Remove(1);
+            GraphX.Add(1, GraphV[1]);
+            GraphV.Remove(1);
             ShortestPaths[1] = 0;
 
-            while (_graphV.Count != 0)
+            while (GraphV.Count != 0)
             {
                 var nodeSelectedId = 0;
                 var distance = 1000000;
 
                 foreach (var nodex in GraphX)
                 {
-                    foreach (var edge in nodex.Value.Where(edge => _graphV.ContainsKey(edge.Key)))
+                    foreach (var edge in nodex.Value.Where(edge => GraphV.ContainsKey(edge.Key)))
                     {
                         if (distance <= ShortestPaths[nodex.Key] + edge.Value) continue;
                         distance = ShortestPaths[nodex.Key] + edge.Value;
@@ -52,8 +52,8 @@ namespace Dijkstra
 
                 if(nodeSelectedId == 0) throw new Exception("Fuck!");
 
-                GraphX.Add(nodeSelectedId, _graphV[nodeSelectedId]);
-                _graphV.Remove(nodeSelectedId);
+                GraphX.Add(nodeSelectedId, GraphV[nodeSelectedId]);
+                GraphV.Remove(nodeSelectedId);
                 ShortestPaths[nodeSelectedId] = distance;
             }
 
@@ -80,7 +80,7 @@ namespace Dijkstra
         /// You can use the cref attribute on any tag to reference a type or member  
         /// and the compiler will check that the reference exists. 
         /// </seealso>
-        private static Dictionary<int, List<KeyValuePair<int, int>>> BuiltGraph(string fileName)
+        public static Dictionary<int, List<KeyValuePair<int, int>>> BuiltGraph(string fileName)
         {
             var graph = new Dictionary<int, List<KeyValuePair<int, int>>>();
             string line;
