@@ -7,7 +7,7 @@ namespace Dijkstra
     /// <summary> 
     /// Main class of the program.</summary> 
     /// <remarks> 
-    /// Class computes a shortest path problem in the graph, using the Dijkstra's algorythms.
+    /// Class computes a shortest path problem in the graph, using the Dijkstra's algorithms.
     /// </remarks> 
     class Program
     {
