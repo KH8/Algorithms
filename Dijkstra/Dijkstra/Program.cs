@@ -4,16 +4,30 @@ using System.Linq;
 
 namespace Dijkstra
 {
+    /// <summary> 
+    /// Main class of the program.</summary> 
+    /// <remarks> 
+    /// Class computes a shortest path problem in the graph, using the Dijkstra's algorythms.
+    /// </remarks> 
     class Program
     {
+        /// <summary> 
+        /// Store for the given graph V.</summary> 
         private static Dictionary<int, List<KeyValuePair<int, int>>> _graphV;
+
+        /// <summary> 
+        /// Store for the working graph X.</summary> 
         private static readonly Dictionary<int, List<KeyValuePair<int, int>>> GraphX = new Dictionary<int, List<KeyValuePair<int, int>>>();
 
-        private static readonly Dictionary<int, int> ShortestPaths = new Dictionary<int, int>(); 
+        /// <summary> 
+        /// Store for the computed shortest paths.</summary> 
+        private static readonly Dictionary<int, int> ShortestPaths = new Dictionary<int, int>();
 
+        /// <summary> 
+        /// Main and the only one method solvin a Dijkstra's shortest path problem</summary> 
         static void Main()
         {
-            _graphV = BuiltGraph();
+            _graphV = BuiltGraph("dijkstraData.txt");
 
             foreach (var node in _graphV) ShortestPaths.Add(node.Key, 1000000);
 
@@ -30,11 +44,9 @@ namespace Dijkstra
                 {
                     foreach (var edge in nodex.Value.Where(edge => _graphV.ContainsKey(edge.Key)))
                     {
-                        if (distance > ShortestPaths[nodex.Key] + edge.Value)
-                        {
-                            distance = ShortestPaths[nodex.Key] + edge.Value;
-                            nodeSelectedId = edge.Key;
-                        }
+                        if (distance <= ShortestPaths[nodex.Key] + edge.Value) continue;
+                        distance = ShortestPaths[nodex.Key] + edge.Value;
+                        nodeSelectedId = edge.Key;
                     }
                 }
 
@@ -59,13 +71,22 @@ namespace Dijkstra
             Console.ReadKey();
         }
 
-        private static Dictionary<int, List<KeyValuePair<int, int>>> BuiltGraph()
+        /// <summary> 
+        /// Graph builder.
+        /// </summary>
+        /// <param name="fileName"> Path to the source *.txt file.
+        /// </param>
+        /// <seealso cref="System.String">
+        /// You can use the cref attribute on any tag to reference a type or member  
+        /// and the compiler will check that the reference exists. 
+        /// </seealso>
+        private static Dictionary<int, List<KeyValuePair<int, int>>> BuiltGraph(string fileName)
         {
             var graph = new Dictionary<int, List<KeyValuePair<int, int>>>();
             string line;
             var verticesList = new List<string[]>();
             // Read the file and display it line by line.
-            var file = new System.IO.StreamReader("dijkstraData.txt");
+            var file = new System.IO.StreamReader(fileName);
             while ((line = file.ReadLine()) != null) verticesList.Add(line.Split('\t'));
             foreach (var edge in verticesList)
             {
