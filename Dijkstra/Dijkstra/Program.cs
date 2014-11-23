@@ -13,6 +13,8 @@ namespace Dijkstra
         static void Main()
         {
             _graph = BuiltGraph();
+
+            Console.ReadKey();
         }
 
         private static Dictionary<int, List<KeyValuePair<int, int>>> BuiltGraph()
@@ -26,13 +28,15 @@ namespace Dijkstra
             foreach (var edge in verticesList)
             {
                 var vertexId = Convert.ToInt32(edge[0]);
-                graph.Add(vertexId, new List<KeyValuePair<int, int>>());
+                if (!graph.ContainsKey(vertexId)) graph.Add(vertexId, new List<KeyValuePair<int, int>>());
 
                 for (var i = 1; i < edge.Length; i++)
                 {
                     if(edge[i] == "") continue;
                     var pair = edge[i].Split(',');
                     graph[vertexId].Add(new KeyValuePair<int, int>(Convert.ToInt32(pair[0]), Convert.ToInt32(pair[1])));
+
+                    if(!graph.ContainsKey(Convert.ToInt32(pair[0]))) graph.Add(Convert.ToInt32(pair[0]), new List<KeyValuePair<int,int>>());
                 }
             }
             return graph;
