@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dijkstra
 {
@@ -17,28 +15,25 @@ namespace Dijkstra
         {
             _graphV = BuiltGraph();
 
+            foreach (var node in _graphV) ShortestPaths.Add(node.Key, 1000000);
+
             GraphX.Add(1, _graphV[1]);
             _graphV.Remove(1);
-            ShortestPaths.Add(1,0);
+            ShortestPaths[1] = 0;
 
             while (_graphV.Count != 0)
             {
                 var nodeSelectedId = 0;
+                var distance = 1000000;
 
                 foreach (var nodex in GraphX)
                 {
                     foreach (var edge in nodex.Value.Where(edge => _graphV.ContainsKey(edge.Key)))
                     {
-                        if (nodeSelectedId == 0)
+                        if (distance > ShortestPaths[nodex.Key] + edge.Value)
                         {
+                            distance = ShortestPaths[nodex.Key] + edge.Value;
                             nodeSelectedId = edge.Key;
-                            ShortestPaths.Add(nodeSelectedId, ShortestPaths[nodex.Key] + edge.Value);
-                        }
-                        else
-                        {
-                            if (edge.Key == nodeSelectedId &&
-                                ShortestPaths[edge.Key] > ShortestPaths[nodex.Key] + edge.Value)
-                                ShortestPaths[edge.Key] = ShortestPaths[nodex.Key] + edge.Value;
                         }
                     }
                 }
@@ -47,7 +42,7 @@ namespace Dijkstra
 
                 GraphX.Add(nodeSelectedId, _graphV[nodeSelectedId]);
                 _graphV.Remove(nodeSelectedId);
-
+                ShortestPaths[nodeSelectedId] = distance;
             }
 
             Console.WriteLine(ShortestPaths[7]+
@@ -79,11 +74,11 @@ namespace Dijkstra
 
                 for (var i = 1; i < edge.Length; i++)
                 {
-                    if(edge[i] == "") continue;
                     var pair = edge[i].Split(',');
-                    graph[vertexId].Add(new KeyValuePair<int, int>(Convert.ToInt32(pair[0]), Convert.ToInt32(pair[1])));
 
-                    if(!graph.ContainsKey(Convert.ToInt32(pair[0]))) graph.Add(Convert.ToInt32(pair[0]), new List<KeyValuePair<int,int>>());
+                    if (pair.Count() != 2) continue;
+                    graph[vertexId].Add(new KeyValuePair<int, int>(Convert.ToInt32(pair[0]), Convert.ToInt32(pair[1])));
+                    if (!graph.ContainsKey(Convert.ToInt32(pair[0]))) graph.Add(Convert.ToInt32(pair[0]), new List<KeyValuePair<int, int>>());
                 }
             }
             return graph;
