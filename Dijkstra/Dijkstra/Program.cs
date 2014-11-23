@@ -8,11 +8,20 @@ namespace Dijkstra
 {
     class Program
     {
-        private static Dictionary<int, List<KeyValuePair<int,int>>> _graph;
+        private static Dictionary<int, List<KeyValuePair<int,int>>> _graphV;
+        private static Dictionary<int, List<KeyValuePair<int, int>>> _graphX = new Dictionary<int, List<KeyValuePair<int, int>>>();
+
+        private static Dictionary<int, int> _shortestPaths = new Dictionary<int, int>(); 
 
         static void Main()
         {
-            _graph = BuiltGraph();
+            _graphV = BuiltGraph();
+
+            _graphX.Add(1,_graphV[1]);
+            _graphV.Remove(1);
+            _shortestPaths.Add(1,0);
+
+
 
             Console.ReadKey();
         }
