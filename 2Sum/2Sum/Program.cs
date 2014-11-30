@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace _2Sum
 {
@@ -6,6 +8,24 @@ namespace _2Sum
     {
         static void Main()
         {
+            var hashSet = BuiltHashSet("2sum.txt");
+            var counter = 0;
+
+            for (Int64 i = -10000; i <= 10000; i++)
+            {
+                foreach (var l in hashSet)
+                {
+                    var valueToLookUp = i - l;
+                    if (l == valueToLookUp) continue;
+                    if (!hashSet.Contains(valueToLookUp)) continue;
+                    counter++;
+                    break;
+                }
+                Console.WriteLine(i + " : " + counter);
+            }
+
+            Console.WriteLine("The result of computation is: " + counter);
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -17,27 +37,20 @@ namespace _2Sum
         /// You can use the cref attribute on any tag to reference a type or member
         /// and the compiler will check that the reference exists.
         /// </seealso>
-        public static Dictionary<int, int> BuiltGraph(string fileName)
+        public static HashSet<Int64> BuiltHashSet(string fileName)
         {
-            var graph = new Dictionary<int, int>();
+            var newHashSet = new HashSet<Int64>();
+
             string line;
-            var verticesList = new List<string[]>();
+
             // Read the file and display it line by line.
             var file = new System.IO.StreamReader(fileName);
-            while ((line = file.ReadLine()) != null) verticesList.Add(line.Split('\t'));
-            foreach (var edge in verticesList)
+            while ((line = file.ReadLine()) != null)
             {
-                var vertexId = Convert.ToInt32(edge[0]);
-                if (!graph.ContainsKey(vertexId)) graph.Add(vertexId, new List<KeyValuePair<int, int>>());
-                for (var i = 1; i < edge.Length; i++)
-                {
-                    var pair = edge[i].Split(',');
-                    if (pair.Count() != 2) continue;
-                    graph[vertexId].Add(new KeyValuePair<int, int>(Convert.ToInt32(pair[0]), Convert.ToInt32(pair[1])));
-                    if (!graph.ContainsKey(Convert.ToInt32(pair[0]))) graph.Add(Convert.ToInt32(pair[0]), new List<KeyValuePair<int, int>>());
-                }
+                var newValue = Convert.ToInt64(line);
+                if (!newHashSet.Contains(newValue)) newHashSet.Add(newValue);
             }
-            return graph;
+            return newHashSet;
         }
     }
 }
