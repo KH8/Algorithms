@@ -14,7 +14,7 @@ namespace _2Sum
             var hashSet = BuiltHashSet("2sum.txt");
 
             CheckRange(hashSet, 10000, 10000);
-            Parallel.For(-10, 11, i => CheckRange(hashSet, i*1000, i*1000 + 999));
+            Parallel.For(-10, 10, i => CheckRange(hashSet, i*1000, i*1000 + 999));
 
             Console.WriteLine("The result of computation is: " + Counter);
             Console.ReadKey();
